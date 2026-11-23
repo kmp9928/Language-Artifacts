@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inglés desde cero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: warm, encouraging teacher; simple Spanish, big friendly targets.
+   IDEA: a travel road map — each unit is a stop on the trip toward A1.
+   PICTURE: a dashed road winding across a red band, numbered stops lit as you pass.
+   COLOUR and TYPE: tomato red field, ink, sunflower accent; Fredoka titles, Nunito body.
+   LAYOUT: hero map + stats on top, unit stops below; lesson view = explanation, cards, quiz. */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#141219);--ink:light-dark(#1b1b24,#f3f0f4);--soft:light-dark(#5d5b66,#b7b2bd);
+--card:light-dark(#f4f4f6,#1f1c26);--line:light-dark(#e3e2e7,#2f2b37);
+--red:#d93a2b;--red2:light-dark(#b72c1f,#a8281c);--sun:#ffc83d;--ok:#1f8a4c;--bad:#c62828;
+--okbg:light-dark(#e5f5ec,#16301f);--badbg:light-dark(#fde8e6,#3a1714)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.55 Nunito,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Fredoka,Nunito,sans-serif;line-height:1.08;margin:0;text-wrap:balance;font-weight:600}
+h1{font-size:clamp(34px,5vw,52px)}h2{font-size:clamp(26px,3.4vw,34px)}h3{font-size:21px}
+.band{padding:clamp(24px,4vw,56px) max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+button{font:inherit;cursor:pointer;border:0;border-radius:14px;min-height:44px;padding:0 16px;font-weight:700}
+button:focus-visible,a:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+.hero{background:var(--red);color:#fff;position:relative;overflow:hidden}
+.hero .sunball{position:absolute;right:-90px;top:-110px;width:300px;height:300px;border-radius:50%;background:var(--sun);opacity:.95}
+.hero .top{display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between;position:relative}
+.hero p.lead{margin:10px 0 0;max-width:56ch;font-size:18px;color:#ffe9e5}
+.stats{display:flex;flex-wrap:wrap;gap:10px}
+.stat{background:rgba(0,0,0,.2);border-radius:16px;padding:10px 16px;min-width:96px}
+.stat b{display:block;font:600 26px/1.1 Fredoka,sans-serif}.stat span{font-size:13px;color:#ffe1db}
+.map{position:relative;margin-top:22px;height:clamp(220px,26vw,300px)}
+.map svg{position:absolute;inset:0;width:100%;height:100%}
+.stop{position:absolute;transform:translate(-50%,-50%);width:54px;height:54px;border-radius:50%;padding:0;font:600 21px Fredoka,sans-serif;
+ background:#fff;color:var(--red2);box-shadow:0 5px 0 rgba(0,0,0,.25)}
+.stop.done{background:var(--sun);color:#1b1b24}
+.stop.lock{background:rgba(255,255,255,.28);color:#fff;cursor:not-allowed;box-shadow:none}
+.stop.next{animation:pulse 1.6s ease-in-out infinite}
+.stop small{position:absolute;top:58px;left:50%;transform:translateX(-50%);white-space:nowrap;font:700 12px Nunito,sans-serif;color:#fff;letter-spacing:.2px}
+@keyframes pulse{50%{box-shadow:0 5px 0 rgba(0,0,0,.25),0 0 0 10px rgba(255,200,61,.45)}}
+.sync{font-size:13px;color:#ffe1db;margin-top:6px;position:relative}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:14px}
+.ucard{background:var(--card);border-radius:20px;padding:18px;display:flex;flex-direction:column;gap:8px;border:2px solid transparent}
+.ucard.cur{border-color:var(--sun)}
+.ucard .n{font:600 14px Fredoka,sans-serif;color:var(--red)}
+.ucard p{margin:0;color:var(--soft);font-size:15px}
+.ucard .row{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:6px}
+.stars{color:var(--sun);font-size:20px;letter-spacing:2px;text-shadow:0 1px 0 rgba(0,0,0,.25)}.stars i{color:var(--line);font-style:normal}
+.go{background:var(--red);color:#fff}.go:disabled{background:var(--line);color:var(--soft);cursor:not-allowed}
+.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.badge{border-radius:999px;padding:8px 14px;background:var(--card);font-size:14px;color:var(--soft);border:2px dashed var(--line)}
+.badge.on{background:var(--sun);color:#1b1b24;border:2px solid var(--sun);font-weight:800}
+.sec{margin-top:34px}.sec>h2{margin-bottom:12px}
+.ubar{background:var(--red);color:#fff}
+.ubar .wrap{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.ubar button{background:rgba(0,0,0,.2);color:#fff}
+.ubar .xp{margin-left:auto;font:600 18px Fredoka,sans-serif}
+.intro{max-width:70ch;font-size:18px}.intro p{margin:0 0 10px}
+.tip{background:light-dark(#fff6d9,#2c2614);border-radius:16px;padding:14px 18px;margin:14px 0;max-width:70ch}
+.tip b{font-family:Fredoka,sans-serif}
+table.gr{border-collapse:collapse;margin:14px 0;min-width:min(100%,420px)}
+table.gr td{padding:8px 14px;border-bottom:1px solid var(--line)}table.gr td:first-child{font-weight:800}
+.wcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr));gap:14px}
+.wc{background:var(--card);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.wc .en{font:600 26px/1.15 Fredoka,sans-serif;display:flex;align-items:center;gap:10px}
+.wc.long .en{font-size:21px}
+.sw{width:26px;height:26px;border-radius:8px;flex:none;border:2px solid var(--line)}
+.wc .es{color:var(--soft)}.wc .hint{font-size:14px;color:var(--red)}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.play{background:var(--ink);color:var(--bg);display:inline-flex;align-items:center;gap:6px}
+.slow{background:transparent;border:2px solid var(--line);color:var(--ink)}
+.mic{background:var(--sun);color:#1b1b24;display:inline-flex;align-items:center;gap:6px}
+.mic.rec{background:var(--bad);color:#fff;animation:pulse 1.2s infinite}
+svg.i{width:18px;height:18px;flex:none}
+.res{font-size:15px;border-radius:12px;padding:10px 12px;display:none}
+.res.show{display:block}.res.good{background:var(--okbg)}.res.mid{background:light-dark(#fff6d9,#2c2614)}.res.low{background:var(--badbg)}
+.res .w-ok{color:var(--ok);font-weight:800}.res .w-no{color:var(--bad);font-weight:800;text-decoration:underline wavy}
+.quiz{background:var(--card);border-radius:24px;padding:clamp(18px,3vw,32px);max-width:760px}
+.qprog{height:12px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:18px}.qprog i{display:block;height:100%;background:var(--sun);transition:width .3s}
+.qtext{font:600 24px/1.2 Fredoka,sans-serif;margin:6px 0 14px}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr));gap:10px}
+.opt{background:var(--bg);color:var(--ink);border:2px solid var(--line);text-align:left;padding:12px 16px;font-size:18px;font-weight:700}
+.opt:hover:not(:disabled){border-color:var(--ink)}
+.opt.right{background:var(--okbg);border-color:var(--ok)}.opt.wrong{background:var(--badbg);border-color:var(--bad)}
+.fb{margin-top:14px;border-radius:14px;padding:12px 16px;display:none}.fb.show{display:block}
+.fb.good{background:var(--okbg)}.fb.bad{background:var(--badbg)}
+.qnav{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.big{font:600 46px Fredoka,sans-serif}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,120px);background:var(--ink);color:var(--bg);padding:12px 20px;border-radius:99px;font-weight:800;transition:transform .3s;z-index:9}
+.toast.show{transform:translate(-50%,0)}
+.confetti{position:fixed;top:-20px;width:10px;height:14px;z-index:8;pointer-events:none;animation:fall 1.8s linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(540deg)}}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:10;padding:16px}
+.modal.show{display:flex}.modal>div{background:var(--bg);border-radius:20px;padding:24px;max-width:420px}
+.foot{color:var(--soft);font-size:14px}
+@media(max-width:600px){.stop{width:44px;height:44px;font-size:18px}.stop small{display:none}.hero .sunball{width:200px;height:200px;right:-80px;top:-90px}.ubar .xp{margin-left:0}}
+@media(prefers-reduced-motion:reduce){.stop.next,.mic.rec{animation:none}.confetti{display:none}.qprog i,.toast{transition:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="modal" id="modal"><div><h3>¿Borrar todo el progreso?</h3><p>Perderás tus XP, estrellas y medallas. No se puede deshacer.</p><div class="btns"><button class="go" id="mYes">Sí, empezar de nuevo</button><button class="ghost" id="mNo">Cancelar</button></div></div></div>
+
+<script>
+{
+const ICON={
+ play:'<svg class="i" viewBox="0 0 24 24" fill="currentColor"><path d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4z"/></svg>',
+ mic:'<svg class="i" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></svg>'};
+
+/* ---------- Course content ---------- */
+const U=[
+{id:1,t:'Las vocales',s:'Vowels',d:'Los sonidos de las vocales en inglés.',
+ intro:['En español hay solo <b>5 sonidos de vocal</b>. En inglés hay <b>más de 12</b>. ¡No te preocupes! Empezamos con los más importantes.','Pulsa <b>Escuchar</b>, después pulsa <b>Habla</b> y di la palabra. El programa te dice si te entendió bien.'],
+ tip:'Las vocales pueden ser <b>cortas</b> (sit, ship) o <b>largas</b> (see, sheep). ¡Cambia el significado! <i>ship</i> = barco, <i>sheep</i> = oveja.',
+ items:[['cat','gato','«æ»: entre a y e, boca abierta'],['bed','cama','e abierta, como en «perro»'],['sit','sentarse','i corta y relajada'],['seat','asiento','i larga: «siit»'],['ship','barco','i corta: «ship»'],['sheep','oveja','i larga: «shiip»'],['hot','caliente','o muy abierta, casi «a»: «jat»'],['cup','taza','a corta y seca: «kap»'],['food','comida','u larga: «fuud»'],['car','coche','a larga: «kaar»']],
+ qs:[['¿Cuántos sonidos de vocal tiene el inglés, más o menos?',['5, como el español','Más de 12','Solo 3'],1,'El inglés tiene más de 12 sonidos de vocal. Por eso escuchar es tan importante.'],
+     ['«ship» y «sheep» son diferentes porque…',['la i de «sheep» es larga','se escriben igual','no hay diferencia'],0,'«ship» (barco) tiene i corta; «sheep» (oveja) tiene i larga.']]},
+{id:2,t:'Sonidos difíciles',s:'Tricky sounds',d:'th, h, v, sh, w: sonidos que no existen en español.',
+ intro:['Algunos sonidos del inglés no existen en español, o son diferentes. Practícalos despacio, con el botón <b>Lento</b>.','<b>th</b>: pon la lengua entre los dientes. <b>h</b>: es solo aire, como una «j» muy suave. <b>v</b>: los dientes de arriba tocan el labio de abajo (¡no es «b»!).'],
+ tip:'La <b>h</b> inglesa casi nunca es muda: <i>hello</i> suena «jelóu», con una j muy suave.',
+ items:[['think','pensar','th: lengua entre los dientes, como la «z» de España'],['the','el / la','th suave: lengua entre los dientes y vibra'],['hello','hola','h = aire suave: «jelóu»'],['house','casa','«jaus», h suave'],['very','muy','v: dientes sobre el labio, no «b»'],['she','ella','sh: como pedir silencio, «shh»'],['job','trabajo','j como «ch» sonora: «dyob»'],['water','agua','w como una «u» rápida: «uóter»']],
+ qs:[['¿Cómo se pronuncia la «h» de «hello»?',['Es muda, no suena','Como una «j» muy suave, solo aire','Como una «k»'],1,'La h inglesa suena: es aire, como una «j» muy suave.'],
+     ['Para el sonido «th» de «think»…',['pones la lengua entre los dientes','cierras los labios','dices una «t» normal'],0,'La lengua va entre los dientes, como la «z» de España.']]},
+{id:3,t:'Saludos',s:'Greetings',d:'Hola, adiós, gracias y por favor.',
+ intro:['Los saludos son lo primero que vas a usar. <b>Hi</b> es informal (amigos); <b>Hello</b> sirve para todo.','<b>How are you?</b> (¿Cómo estás?) se responde normalmente con <b>I\'m fine, thanks.</b>'],
+ tip:'<b>Good night</b> solo se dice para <b>despedirse</b> por la noche o al ir a dormir. Para saludar por la noche se dice <b>Good evening</b>.',
+ items:[['Hello','hola',''],['Hi','hola (informal)','«jai»'],['Good morning','buenos días',''],['Good afternoon','buenas tardes','«gud áfternun»'],['Good night','buenas noches (al irse)','«gud nait»'],['Goodbye','adiós','«gudbái»'],['See you later','hasta luego',''],['Thank you','gracias','th: lengua entre los dientes'],['Please','por favor','i larga: «pliis»'],['How are you?','¿Cómo estás?','«jau ar iu»'],["I'm fine, thanks.",'Estoy bien, gracias.','']],
+ qs:[['¿Cuándo se dice «Good night»?',['Al llegar a una fiesta por la noche','Al despedirse por la noche','Por la mañana'],1,'«Good night» es para despedirse. Para saludar por la noche: «Good evening».'],
+     ['¿Qué saludo es más informal?',['Hi','Good afternoon','Good morning'],0,'«Hi» es informal, para amigos y familia.']]},
+{id:4,t:'Presentarse',s:'To be',d:'El verbo «to be» (ser/estar) y cómo presentarte.',
+ intro:['El verbo <b>to be</b> significa <b>ser</b> y <b>estar</b> a la vez. Es el verbo más importante del inglés.','En inglés <b>siempre</b> hay que decir el sujeto: no se dice «am Ana», se dice «<b>I</b> am Ana».'],
+ table:[['I am (I\'m)','yo soy / estoy'],['You are','tú eres / estás'],['He is','él es / está'],['She is','ella es / está'],['It is','es / está (cosa)'],['We are','nosotros somos'],['They are','ellos son']],
+ tip:'La edad se dice con <b>to be</b>, no con «tener»: «Tengo 20 años» = <b>I am twenty years old.</b>',
+ items:[['My name is Ana.','Me llamo Ana.',''],['I am from Spain.','Soy de España.','«ai am from spein»'],['I am twenty years old.','Tengo veinte años.','«tuénti iers old»'],['Nice to meet you.','Encantado de conocerte.','«nais tu miit iu»'],['What is your name?','¿Cómo te llamas?','«uát is ior neim»'],['Where are you from?','¿De dónde eres?','«uér ar iu from»'],['She is my friend.','Ella es mi amiga.',''],['We are students.','Somos estudiantes.','']],
+ qs:[['«Tengo 20 años» en inglés es…',['I have twenty years.','I am twenty years old.','I twenty years.'],1,'La edad se dice con «to be»: I am twenty years old.'],
+     ['«To be» significa…',['solo «ser»','solo «estar»','«ser» y «estar»'],2,'En inglés un solo verbo, «to be», significa ser y estar.']]},
+{id:5,t:'Números',s:'Numbers',d:'Del 1 al 20.',
+ intro:['Los números del 1 al 12 tienen nombres propios. Del 13 al 19 terminan en <b>-teen</b>.','Escucha bien: <b>thirteen</b> (13) y <b>thirty</b> (30) suenan parecidos. En <b>-teen</b> el acento va al <b>final</b>.'],
+ tip:'«three» empieza con <b>th</b>: lengua entre los dientes. No digas «tri».',
+ items:[['one','uno','«uan»'],['two','dos','«tu»'],['three','tres','th + «rii»'],['four','cuatro','«for»'],['five','cinco','«faiv», v final'],['six','seis','«siks»'],['seven','siete','«séven»'],['eight','ocho','«eit»'],['nine','nueve','«nain»'],['ten','diez',''],['eleven','once','«iléven»'],['twelve','doce','«tuelv»'],['thirteen','trece','acento al final: «zertíin»'],['twenty','veinte','«tuénti»']],
+ qs:[['En «thirteen» (13), el acento va…',['al principio','al final: «-TEEN»','no tiene acento'],1,'En los números -teen el acento va al final. En thirty (30) va al principio.']]},
+{id:6,t:'Colores',s:'Colours',d:'Los colores y dónde va el adjetivo.',
+ intro:['En inglés el adjetivo va <b>antes</b> del nombre: «un coche rojo» = <b>a red car</b>.','Los adjetivos <b>no cambian</b> en plural ni en femenino: <i>red cars</i>, <i>a red house</i>.'],
+ tip:'«purple» es morado. «brown» es marrón. «orange» es naranja (color y fruta).',
+ items:[['red','rojo','«red», r suave sin vibrar','#d62828'],['blue','azul','«bluu»','#1d5fd1'],['green','verde','«griin»','#2a9d55'],['yellow','amarillo','«iélou»','#f4c20d'],['black','negro','«blak»','#111111'],['white','blanco','«uait»','#ffffff'],['orange','naranja','«órinch»','#f08a24'],['purple','morado','«pérpol»','#7b3fbf'],['pink','rosa','','#f48fb1'],['brown','marrón','«braun»','#7a4a24'],['a red car','un coche rojo','adjetivo antes del nombre','#d62828']],
+ qs:[['«Un coche rojo» en inglés es…',['a car red','a red car','a reds car'],1,'El adjetivo va antes del nombre: a red car.']]},
+{id:7,t:'La familia',s:'Family',d:'Madre, padre, hermanos…',
+ intro:['Para decir «mi» usa <b>my</b>: <i>my mother</i>, <i>my brother</i>. Para presentar a alguien: <b>This is my…</b>'],
+ tip:'¡Cuidado! <b>parents</b> significa <b>padres</b> (madre y padre), no «parientes».',
+ items:[['mother','madre','«máder», th suave'],['father','padre','«fáder»'],['sister','hermana',''],['brother','hermano','«bráder»'],['parents','padres','¡no son «parientes»!'],['son','hijo','suena como «san»'],['daughter','hija','«dóter», la gh no suena'],['grandmother','abuela',''],['grandfather','abuelo',''],['This is my mother.','Esta es mi madre.','']],
+ qs:[['«parents» significa…',['parientes','padres','primos'],1,'parents = padres (madre y padre). Es un «falso amigo».'],['«Mi hermano» es…',['my brother','me brother','mine brother'],0,'«my» = mi: my brother.']]},
+{id:8,t:'Comida y gustos',s:'Food & likes',d:'Me gusta / no me gusta.',
+ intro:['Para decir lo que te gusta: <b>I like</b> + cosa. Para lo que no: <b>I don\'t like</b> + cosa.','Para cosas en general no se usa «the»: «Me gusta <u>el</u> café» = <b>I like coffee</b>.'],
+ tip:'Para preguntar: <b>Do you like…?</b> Respuesta corta: <b>Yes, I do.</b> / <b>No, I don\'t.</b>',
+ items:[['water','agua','«uóter»'],['bread','pan','«bred»'],['apple','manzana','«ápol»'],['coffee','café','«cófi»'],['milk','leche',''],['chicken','pollo','«chíken»'],['I like coffee.','Me gusta el café.',''],["I don't like milk.",'No me gusta la leche.','«ai dont laik milk»'],['Do you like apples?','¿Te gustan las manzanas?','']],
+ qs:[['«Me gusta el café» es…',['I like the coffee.','I like coffee.','Me like coffee.'],1,'Para cosas en general no usamos «the»: I like coffee.'],['«No me gusta la leche» es…',["I don't like milk.",'I not like milk.','No I like milk.'],0,"Negativo: I don't like + cosa."]]},
+{id:9,t:'Días y rutina',s:'Days & routine',d:'Los días de la semana y tu día.',
+ intro:['En inglés los días de la semana se escriben siempre con <b>mayúscula</b>: Monday, Tuesday…','Para la hora: <b>at</b> + número: <i>I get up at seven</i> (me levanto a las siete).'],
+ tip:'«Wednesday» (miércoles) se pronuncia «uénsdei»: la primera d no suena.',
+ items:[['Monday','lunes','«mándei»'],['Tuesday','martes','«tiúsdei»'],['Wednesday','miércoles','«uénsdei»'],['Thursday','jueves','th: «zérsdei»'],['Friday','viernes','«fráidei»'],['Saturday','sábado','«sáterdei»'],['Sunday','domingo','«sándei»'],['I get up at seven.','Me levanto a las siete.',''],['I go to work.','Voy al trabajo.','']],
+ qs:[['En inglés, los días de la semana se escriben…',['con minúscula','con mayúscula','como quieras'],1,'Siempre con mayúscula: Monday, Friday…'],['«Me levanto a las siete» es…',['I get up in seven.','I get up at seven.','I get up on seven.'],1,'Para la hora usamos «at».']]},
+{id:10,t:'Lectura: el día de Ana',s:"Ana's day",d:'Tu primer texto en inglés.',read:true,
+ intro:['¡Tu primer texto! Pulsa <b>Escuchar todo</b> para oír el texto completo. Después escucha cada frase y repítela.','Usas todo lo que aprendiste: saludos, «to be», números, familia, gustos y colores.'],
+ tip:'Lee primero en inglés. Mira la traducción solo si la necesitas.',
+ items:[['Hello! My name is Ana.','¡Hola! Me llamo Ana.',''],['I am from Madrid, in Spain.','Soy de Madrid, en España.',''],['I am twenty-five years old.','Tengo veinticinco años.',''],['I have a brother and a sister.','Tengo un hermano y una hermana.',''],['I get up at seven every day.','Me levanto a las siete todos los días.',''],["I like coffee, but I don't like milk.",'Me gusta el café, pero no me gusta la leche.',''],['My favorite color is blue.','Mi color favorito es el azul.',''],['Nice to meet you!','¡Encantada de conocerte!','']],
+ qs:[['Where is Ana from? (¿De dónde es Ana?)',['London','Madrid','Mexico'],1,'«I am from Madrid, in Spain.»'],['How old is Ana? (¿Cuántos años tiene?)',['20','25','7'],1,'«I am twenty-five years old.»'],["What doesn't Ana like? (¿Qué no le gusta?)",['coffee','milk','blue'],1,"«I don't like milk.»"],['¿Cuántos hermanos tiene Ana?',['Un hermano y una hermana','Dos hermanas','Ninguno'],0,'«I have a brother and a sister.»']]}
+];
+
+/* ---------- State & persistence ---------- */
+const KEY='ingles-desde-cero-v1';
+const blank=()=>({xp:0,units:{},said:{},streak:{n:0,last:''},badges:[],t:0});
+let S=blank();
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(blank(),JSON.parse(r))}catch(e){}
+let DB=null,UID=null,syncMsg='Tu progreso se guarda en este navegador.',saveT=null,writing=Promise.resolve();
+function save(){
+ S.t=Date.now();
+ try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
+ clearTimeout(saveT);
+ saveT=setTimeout(()=>{
+  if(!DB||!UID)return;
+  const body=JSON.parse(JSON.stringify(S));
+  writing=writing.then(()=>DB.doc('data/users/'+UID+'/progress').set(body))
+   .then(()=>setSync('Progreso guardado en tu cuenta. Puedes seguir en otro dispositivo.'))
+   .catch(()=>setSync('No se pudo guardar en tu cuenta; se guarda en este navegador.'));
+ },800);
+}
+function setSync(m){syncMsg=m;const el=document.getElementById('sync');if(el)el.textContent=m}
+const day=d=>{const x=new Date(d);return x.getFullYear()+'-'+(x.getMonth()+1)+'-'+x.getDate()};
+function touch(){const t=day(Date.now()),y=day(Date.now()-864e5);if(S.streak.last===t)return;S.streak.n=S.streak.last===y?S.streak.n+1:1;S.streak.last=t}
+const streakNow=()=>[day(Date.now()),day(Date.now()-864e5)].includes(S.streak.last)?S.streak.n:0;
+const stars=id=>(S.units[id]||{}).stars||0;
+const unlocked=i=>i===0||stars(U[i-1].id)>0;
+const doneCount=()=>U.filter(u=>stars(u.id)>0).length;
+const level=()=>1+Math.floor(S.xp/150);
+const cefr=()=>doneCount()>=10?'A1 completo':doneCount()>=5?'A1':'A0';
+const BADGES=[['first','Primera voz','Pronuncia bien tu primera palabra'],['quiz','Primer quiz','Aprueba un quiz'],['perfect','Perfecto','3 estrellas en un quiz'],['streak3','Racha de 3 días','Practica 3 días seguidos'],['a1','Nivel A1','Termina 5 unidades'],['all','Curso completo','Termina las 10 unidades']];
+function award(id){if(S.badges.includes(id))return;S.badges.push(id);const b=BADGES.find(x=>x[0]===id);setTimeout(()=>toast('Nueva medalla: '+b[1]),900)}
+function addXP(n,msg){S.xp+=n;touch();if(streakNow()>=3)award('streak3');save();toast('+'+n+' XP'+(msg?' · '+msg:''));const x=document.getElementById('xpNow');if(x)x.textContent=S.xp+' XP'}
+
+/* ---------- Sound: speak, listen, effects ---------- */
+let T=null,D=null,listening=null,sr=null;
+const C=window.claude;
+if(C&&C.use){
+ C.use('tts').then(t=>{T=t}).catch(()=>{});
+ C.use('dictation').then(d=>{if(!d)return;D=d;
+  d.onPartial(({text})=>{if(listening)listening.live((listening.acc+' '+text).trim())});
+  d.onFinal(({text})=>{if(!listening)return;listening.acc=(listening.acc+' '+text).trim();listening.live(listening.acc);clearTimeout(listening.to);listening.to=setTimeout(()=>D.stop().catch(()=>{}),1200)});
+  d.onState(({state})=>{if(state==='idle'&&listening){const l=listening;listening=null;clearTimeout(l.to);clearTimeout(l.max);l.done(l.acc)}});
+ }).catch(()=>{});
+ Promise.all([C.use('db'),C.use('user')]).then(async([db,user])=>{
+  if(!db||!user)return;const id=await user.id();if(!id)return;DB=db;UID=id;
+  const timer=setTimeout(()=>setSync('No se pudo conectar con tu cuenta todavía; se guarda en este navegador.'),10000);
+  try{const snap=await db.doc('data/users/'+id+'/progress').get();clearTimeout(timer);
+   const r=snap.exists?snap.data():null;
+   if(r&&(r.t||0)>(S.t||0)){S=Object.assign(blank(),JSON.parse(JSON.stringify(r)));try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render()}
+   else if(S.t)save();
+   setSync('Progreso sincronizado con tu cuenta.');
+  }catch(e){clearTimeout(timer);setSync('Tu progreso se guarda en este navegador.')}
+ }).catch(()=>{});
+}
+function synth(text,slow){
+ const ss=window.speechSynthesis;if(!ss){toast('Tu navegador no puede reproducir audio');return}
+ ss.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-US';u.rate=slow?.65:.92;
+ const v=ss.getVoices().filter(v=>/^en[-_]US/i.test(v.lang));if(v.length)u.voice=v.find(x=>/natural|google|samantha|aria|jenny/i.test(x.name))||v[0];
+ ss.speak(u);
+}
+function speak(text,slow){
+ if(T){T.speak(text,{language:'en',rate:slow?.7:1}).catch(e=>{const c=e&&e.code;if(c==='not_granted'){T=null;synth(text,slow)}else if(c==='unavailable'||c==='rate_limited'||c==='capability_disabled')synth(text,slow)});return}
+ synth(text,slow);
+}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let srDenied=false;
+function listen(live,done){
+ if(D){
+  listening={acc:'',live,done,to:0,max:setTimeout(()=>D.stop().catch(()=>{}),8000)};
+  D.start().catch(e=>{const l=listening;listening=null;if(l){clearTimeout(l.max);l.done(null,e&&e.code==='not_granted'?'denied':'error')}});
+  return true;
+ }
+ if(SR&&!srDenied){
+  try{
+   sr=new SR();sr.lang='en-US';sr.interimResults=true;sr.maxAlternatives=1;let fin='',got=false;
+   sr.onresult=ev=>{let it='';fin='';for(const r of ev.results){if(r.isFinal)fin+=r[0].transcript+' ';else it+=r[0].transcript}live((fin+it).trim())};
+   sr.onerror=ev=>{if(ev.error==='not-allowed'||ev.error==='service-not-allowed'){srDenied=true;got=true;done(null,'denied')}};
+   sr.onend=()=>{sr=null;if(!got){got=true;done(fin.trim())}};
+   sr.start();return true;
+  }catch(e){srDenied=true}
+ }
+ done(null,'none');return false;
+}
+function stopListen(){if(D&&listening)D.stop().catch(()=>{});else if(sr)try{sr.stop()}catch(e){}}
+let AC=null;
+function beep(ok){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);const t=AC.currentTime;
+ o.frequency.setValueAtTime(ok?660:220,t);if(ok)o.frequency.setValueAtTime(880,t+.1);g.gain.setValueAtTime(.12,t);g.gain.exponentialRampToValueAtTime(.001,t+.35);o.start(t);o.stop(t+.36)}catch(e){}}
+
+/* ---------- Pronunciation scoring ---------- */
+const NUMS=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty'];
+function words(s){
+ s=(s||'').toLowerCase().replace(/[’`]/g,"'").replace(/-/g,' ').replace(/\bi'm\b/g,'i am').replace(/n't\b/g,' not').replace(/'re\b/g,' are').replace(/'s\b/g,' is').replace(/\bcan not\b/g,'cannot');
+ return s.replace(/[^a-z0-9' ]/g,' ').split(/\s+/).filter(Boolean).flatMap(w=>{const n=+w;if(/^\d+$/.test(w)){if(n<=20)return[NUMS[n]];if(n<100){const t=['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'][Math.floor(n/10)];return n%10?[t,NUMS[n%10]]:[t]}}return[w.replace(/'/g,'')]});
+}
+function lev(a,b){const m=a.length,n=b.length,d=Array.from({length:m+1},(_,i)=>[i]);for(let j=1;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[m][n]}
+const sim=(a,b)=>1-lev(a,b)/Math.max(a.length,b.length,1);
+function score(target,heard){
+ const t=words(target),h=words(heard),used=new Set();let p=0;
+ const marks=t.map(w=>{let k=-1;for(let i=p;i<h.length;i++)if(!used.has(i)&&sim(w,h[i])>=.75){k=i;break}
+  if(k<0)for(let i=0;i<h.length;i++)if(!used.has(i)&&sim(w,h[i])>=.75){k=i;break}
+  if(k>=0){used.add(k);p=k+1;return true}return false});
+ const ok=marks.filter(Boolean).length;let pct=t.length?Math.round(ok/t.length*100):0;
+ const extra=Math.max(0,h.length-used.size-1);pct=Math.max(0,pct-extra*5);
+ return{pct,marks,tw:target.split(/\s+/)};
+}
+function feedbackHTML(target,heard,hint){
+ if(heard===''||heard==null)return{cls:'low',pct:0,html:'No te escuché. Habla un poco más alto y cerca del micrófono.'};
+ const r=score(target,heard);
+ const msg=r.pct>=90?'¡Perfecto! Te entendí muy bien.':r.pct>=70?'¡Muy bien! Casi perfecto.':r.pct>=40?'Vas bien. Repite las palabras subrayadas.':'No te entendí bien. Escucha otra vez (prueba «Lento») y repite despacio.';
+ const ws=target.split(/\s+/).map((w,i)=>`<span class="${r.marks[i]?'w-ok':'w-no'}">${w}</span>`).join(' ');
+ return{cls:r.pct>=70?'good':r.pct>=40?'mid':'low',pct:r.pct,html:`<b>${r.pct}% · ${msg}</b><br>Te escuché: «${esc(heard)}»<br>${ws}${r.pct<70&&hint?'<br>Consejo: '+hint:''}`};
+}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const micMsg=why=>why==='denied'?'No hay permiso para usar el micrófono. Puedes seguir escuchando y repitiendo en voz alta.':'El reconocimiento de voz no está disponible aquí. Ábrelo en Chrome o en la app de escritorio de Claude.';
+
+/* ---------- UI helpers ---------- */
+const app=document.getElementById('app');
+let toastT;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2200)}
+function confetti(){const cs=['#ffc83d','#d93a2b','#1d5fd1','#2a9d55','#ffffff'];for(let i=0;i<50;i++){const c=document.createElement('i');c.className='confetti';c.style.left=Math.random()*100+'vw';c.style.background=cs[i%cs.length];c.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),2600)}}
+const starStr=n=>'★'.repeat(n)+'<i>'+'★'.repeat(3-n)+'</i>';
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+/* ---------- Home ---------- */
+function home(){
+ const nextI=U.findIndex((u,i)=>unlocked(i)&&!stars(u.id));
+ app.innerHTML=`
+ <header class="hero band"><div class="sunball"></div><div class="wrap">
+  <div class="top"><div><h1>Inglés desde cero</h1><p class="lead">Tu viaje del nivel A0 al A1. Escucha, habla y gana estrellas en cada parada. ¡Paso a paso!</p></div>
+  <div class="stats"><div class="stat"><b id="xpNow">${S.xp} XP</b><span>Nivel ${level()}</span></div><div class="stat"><b>${streakNow()}</b><span>días de racha</span></div><div class="stat"><b>${U.reduce((a,u)=>a+stars(u.id),0)}/30</b><span>estrellas</span></div><div class="stat"><b>${cefr()}</b><span>tu nivel</span></div></div></div>
+  <div class="map" id="map"><svg viewBox="0 0 1000 260" preserveAspectRatio="none" aria-hidden="true"><path id="road" d="M30 200 C 150 60, 230 60, 300 140 S 450 230, 520 120 S 680 20, 760 110 S 900 230, 970 70" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="22" stroke-linecap="round" vector-effect="non-scaling-stroke"/><path d="M30 200 C 150 60, 230 60, 300 140 S 450 230, 520 120 S 680 20, 760 110 S 900 230, 970 70" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="10 12" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+  <div class="sync" id="sync">${syncMsg}</div>
+ </div></header>
+ <main class="band"><div class="wrap">
+  <section><h2>Tus unidades</h2><p class="foot" style="margin:4px 0 14px">Aprueba el mini quiz de una unidad (60% o más) para abrir la siguiente.</p>
+  <div class="grid">${U.map((u,i)=>{const st=stars(u.id),open=unlocked(i);return`<article class="ucard ${i===nextI?'cur':''}"><span class="n">Unidad ${u.id} · ${u.s}</span><h3>${u.t}</h3><p>${u.d}</p><div class="row"><span class="stars" aria-label="${st} de 3 estrellas">${starStr(st)}</span><button class="go" data-u="${u.id}" ${open?'':'disabled'}>${!open?'Bloqueada':st?'Repasar':i===nextI?'Empezar':'Abrir'}</button></div></article>`}).join('')}</div></section>
+  <section class="sec"><h2>Medallas</h2><div class="badges">${BADGES.map(b=>`<span class="badge ${S.badges.includes(b[0])?'on':''}" title="${b[2]}">${b[1]} · <small>${b[2]}</small></span>`).join('')}</div></section>
+  <section class="sec foot"><p>El micrófono funciona mejor en Chrome o en la app de escritorio de Claude. El programa comprueba si entiende tus palabras; no analiza cada sonido como un profesor.</p><button class="ghost" id="reset">Borrar progreso</button></section>
+ </div></main>`;
+ const road=document.getElementById('road'),map=document.getElementById('map'),L=road.getTotalLength();
+ map.insertAdjacentHTML('beforeend',U.map((u,i)=>{const pt=road.getPointAtLength(L*(.03+.94*i/(U.length-1)));const st=stars(u.id),open=unlocked(i);
+  return`<button class="stop ${st?'done':open?'':'lock'} ${i===nextI?'next':''}" style="left:${pt.x/10}%;top:${pt.y/2.6}%" data-u="${u.id}" ${open?'':'aria-disabled="true"'} aria-label="Unidad ${u.id}: ${u.t}">${u.id}<small>${u.t}</small></button>`}).join(''));
+}
+
+/* ---------- Unit ---------- */
+let Q=null,curU=null;
+function unit(u){
+ curU=u;const isRead=!!u.read;
+ app.innerHTML=`
+ <div class="ubar band" style="padding-block:14px"><div class="wrap"><button id="back">← Mapa</button><span>Unidad ${u.id} de ${U.length}</span><span class="xp" id="xpNow">${S.xp} XP</span></div></div>
+ <header class="hero band" style="padding-top:18px"><div class="sunball"></div><div class="wrap" style="position:relative"><h1>${u.t}</h1><p class="lead">${u.s} · ${u.d}</p></div></header>
+ <main class="band"><div class="wrap">
+  <section><h2>Explicación</h2><div class="intro">${u.intro.map(p=>`<p>${p}</p>`).join('')}</div>
+  ${u.table?`<table class="gr">${u.table.map(r=>`<tr><td><button class="play" data-say="${esc(r[0].replace(/ \(.*\)/,''))}" aria-label="Escuchar">${ICON.play}</button> ${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table>`:''}
+  <div class="tip"><b>Truco:</b> ${u.tip}</div></section>
+  <section class="sec"><h2>${isRead?'Lee, escucha y repite':'Escucha y repite'}</h2>
+  ${isRead?`<div class="btns" style="margin-bottom:14px"><button class="play" id="all">${ICON.play} Escuchar todo</button><button class="slow" id="allSlow">Todo lento</button></div>`:''}
+  <div class="wcards">${u.items.map((it,i)=>`<div class="wc ${it[0].length>16?'long':''}"><div class="en">${it[3]?`<span class="sw" style="background:${it[3]}"></span>`:''}${esc(it[0])}${S.said[u.id+'-'+i]?' <span title="Pronunciada bien" style="color:var(--ok);font-size:18px">✓</span>':''}</div><div class="es">${esc(it[1])}</div>${it[2]?`<div class="hint">${it[2]}</div>`:''}
+   <div class="btns"><button class="play" data-say="${esc(it[0])}">${ICON.play} Escuchar</button><button class="slow" data-slow="${esc(it[0])}">Lento</button><button class="mic" data-mic="${i}">${ICON.mic} Habla</button></div><div class="res" id="r${i}" aria-live="polite"></div></div>`).join('')}</div></section>
+  <section class="sec"><h2>Mini quiz</h2><div class="quiz" id="quiz"></div></section>
+ </div></main>`;
+ quizStart(true);window.scrollTo(0,0);
+}
+function micClick(btn,target,hint,resEl,onScore){
+ if(btn.classList.contains('rec')){stopListen();return}
+ btn.classList.add('rec');btn.lastChild.textContent=' Parar';resEl.className='res show mid';resEl.textContent='Te escucho… di: «'+target+'»';
+ listen(t=>{resEl.textContent='Te escucho: «'+t+'»'},(text,why)=>{
+  btn.classList.remove('rec');btn.lastChild.textContent=btn.dataset.label||' Habla';
+  if(text==null){resEl.className='res show low';resEl.textContent=micMsg(why);return}
+  const f=feedbackHTML(target,text,hint);resEl.className='res show '+f.cls;resEl.innerHTML=f.html;onScore(f.pct);
+ });
+}
+
+/* ---------- Quiz ---------- */
+function makeQuiz(u){
+ const items=u.items.map((it,i)=>({en:it[0],es:it[1],i}));const qs=[];
+ const concept=shuffle(u.qs).slice(0,u.read?4:2).map(c=>({type:'concept',q:c[0],opts:c[1].map((o,k)=>({t:o,ok:k===c[2]})),ex:c[3]}));
+ const pick=shuffle(items),types=shuffle(['listen','es2en','en2es','listen','es2en']);
+ const nGen=u.read?1:4;
+ for(let k=0;k<nGen;k++){const it=pick[k%pick.length],ty=u.read?'listen':types[k];const dis=shuffle(items.filter(x=>x.en!==it.en)).slice(0,3);
+  const field=ty==='en2es'?'es':'en';
+  qs.push({type:ty,it,q:ty==='listen'?'Escucha y elige lo que oyes':ty==='es2en'?`¿Cómo se dice «${it.es}» en inglés?`:`¿Qué significa «${it.en}»?`,
+   opts:shuffle([it,...dis]).map(x=>({t:x[field],ok:x.en===it.en})),ex:`${it.en} = ${it.es}`})}
+ const sayIt=shuffle(items.filter(x=>x.en.split(' ').length<=6))[0]||items[0];
+ qs.push({type:'say',it:sayIt,q:`Di en voz alta: «${sayIt.en}»`,ex:`${sayIt.en} = ${sayIt.es}`});
+ return shuffle(qs.slice(0,-1)).concat(qs.slice(-1));
+}
+function quizStart(intro){
+ const el=document.getElementById('quiz');const u=curU;
+ if(intro){const st=stars(u.id);el.innerHTML=`<p class="qtext">${st?'Ya tienes '+st+' de 3 estrellas. ¿Quieres mejorar?':'¿Listo? Responde unas preguntas sobre esta unidad.'}</p><p class="foot">Gana 10 XP por cada respuesta correcta. Con 60% apruebas y abres la siguiente unidad.</p><button class="go" id="qgo">Empezar el quiz</button>`;return}
+ Q={u,qs:makeQuiz(u),i:0,right:0,total:0};quizShow();
+}
+function quizShow(){
+ const el=document.getElementById('quiz'),q=Q.qs[Q.i],n=Q.qs.length;
+ let body='';
+ if(q.type==='say')body=`<div class="btns"><button class="play" data-say="${esc(q.it.en)}">${ICON.play} Escuchar</button><button class="mic" id="qmic">${ICON.mic} Hablar</button><button class="ghost" id="qskip">No puedo hablar ahora</button></div><div class="res" id="qres" aria-live="polite"></div>`;
+ else body=`${q.type==='listen'||q.type==='en2es'?`<div class="btns" style="margin-bottom:12px"><button class="play" data-say="${esc(q.it.en)}">${ICON.play} Escuchar</button><button class="slow" data-slow="${esc(q.it.en)}">Lento</button></div>`:''}<div class="opts">${q.opts.map((o,k)=>`<button class="opt" data-o="${k}">${esc(o.t)}</button>`).join('')}</div>`;
+ el.innerHTML=`<div class="qprog" aria-hidden="true"><i style="width:${Q.i/n*100}%"></i></div><span class="foot">Pregunta ${Q.i+1} de ${n}</span><p class="qtext">${esc(q.q)}</p>${body}<div class="fb" id="fb" aria-live="polite"></div><div class="qnav" id="qnav"></div>`;
+ if(q.type==='listen')speak(q.it.en);
+}
+function quizAnswer(ok,skipped){
+ const q=Q.qs[Q.i];if(!skipped){Q.total++;if(ok){Q.right++;addXP(10)}beep(ok)}
+ const fb=document.getElementById('fb');fb.className='fb show '+(skipped?'':ok?'good':'bad');
+ fb.innerHTML=(skipped?'Sin problema, la saltamos.':ok?'<b>¡Correcto!</b> ':'<b>Casi.</b> ')+' '+esc(q.ex);
+ document.getElementById('qnav').innerHTML=`<button class="go" id="qnext">${Q.i+1<Q.qs.length?'Siguiente':'Ver resultado'}</button>`;
+ document.getElementById('qnext').focus();
+}
+function quizEnd(){
+ const u=Q.u,pct=Q.total?Math.round(Q.right/Q.total*100):0,st=pct>=100?3:pct>=80?2:pct>=60?1:0,prev=stars(u.id);
+ const rec=S.units[u.id]||{stars:0,best:0};
+ if(st>prev)rec.stars=st;rec.best=Math.max(rec.best||0,pct);S.units[u.id]=rec;
+ if(st&&!prev){award('quiz');addXP(30,'unidad completada')}
+ if(st===3)award('perfect');if(doneCount()>=5)award('a1');if(doneCount()>=10)award('all');save();
+ const idx=U.indexOf(u),next=U[idx+1];
+ document.getElementById('quiz').innerHTML=`<div class="qprog"><i style="width:100%"></i></div><div class="big">${pct}%</div><div class="stars" style="font-size:38px">${starStr(st)}</div>
+  <p class="qtext">${st===3?'¡Perfecto! Eres una estrella.':st?'¡Aprobado! Muy buen trabajo.':'Todavía no. Repasa las tarjetas y vuelve a intentarlo.'}</p>
+  <p>${Q.right} de ${Q.total} respuestas correctas.${st&&next&&!prev?' Has abierto la unidad '+next.id+': '+next.t+'.':''}</p>
+  <div class="qnav">${st&&next?`<button class="go" data-u="${next.id}">Siguiente unidad →</button>`:''}<button class="ghost" id="qagain">Repetir quiz</button><button class="ghost" id="qhome">Volver al mapa</button></div>`;
+ if(st)confetti();
+}
+
+/* ---------- Events ---------- */
+document.addEventListener('click',e=>{
+ const b=e.target.closest('button');if(!b)return;
+ if(b.dataset.u){const u=U.find(x=>x.id==b.dataset.u),i=U.indexOf(u);if(!unlocked(i)){toast('Aprueba la unidad anterior para abrir esta');return}location.hash='unidad-'+u.id;return}
+ if(b.dataset.say!==undefined){speak(b.dataset.say,false);return}
+ if(b.dataset.slow!==undefined){speak(b.dataset.slow,true);return}
+ if(b.dataset.mic!==undefined){const i=+b.dataset.mic,it=curU.items[i],key=curU.id+'-'+i;
+  micClick(b,it[0],it[2],document.getElementById('r'+i),pct=>{if(pct>=70){beep(true);if(!S.said[key]){S.said[key]=1;award('first');addXP(5,'buena pronunciación')}}});return}
+ switch(b.id){
+  case'back':case'qhome':location.hash='';return;
+  case'reset':document.getElementById('modal').classList.add('show');document.getElementById('mNo').focus();return;
+  case'mNo':document.getElementById('modal').classList.remove('show');return;
+  case'mYes':S=blank();save();document.getElementById('modal').classList.remove('show');render();toast('Progreso borrado');return;
+  case'all':case'allSlow':speak(curU.items.map(x=>x[0]).join(' '),b.id==='allSlow');return;
+  case'qgo':case'qagain':quizStart(false);return;
+  case'qnext':Q.i++;if(Q.i<Q.qs.length)quizShow();else quizEnd();return;
+  case'qskip':if(!document.getElementById('qnext'))quizAnswer(false,true);return;
+  case'qmic':{if(document.getElementById('qnext'))return;const q=Q.qs[Q.i];b.dataset.label=' Hablar';
+   micClick(b,q.it.en,'',document.getElementById('qres'),pct=>{if(pct>=70)quizAnswer(true);else{document.getElementById('qres').innerHTML+='<br><b>Inténtalo otra vez</b> o pulsa «No puedo hablar ahora».'}});return}
+ }
+ if(b.dataset.o!==undefined&&Q){const q=Q.qs[Q.i];if(document.getElementById('qnext'))return;const k=+b.dataset.o,ok=q.opts[k].ok;
+  document.querySelectorAll('.opt').forEach((x,j)=>{x.disabled=true;if(q.opts[j].ok)x.classList.add('right');else if(j===k)x.classList.add('wrong')});quizAnswer(ok)}
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('modal').classList.remove('show')});
+function render(){const m=/^#unidad-(\d+)$/.exec(location.hash);const u=m&&U.find(x=>x.id==m[1]);if(u&&unlocked(U.indexOf(u)))unit(u);else{curU=null;Q=null;home()}}
+window.addEventListener('hashchange',()=>{stopListen();if(window.speechSynthesis)speechSynthesis.cancel();render();window.scrollTo(0,0)});
+if(window.speechSynthesis)speechSynthesis.getVoices();
+render();
+}
+</script>
+</body>
+</html>
